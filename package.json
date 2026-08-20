@@ -19,7 +19,7 @@
     "express": "^4.19.2",
     "js-yaml": "^5.3.0",
     "postgres": "^3.4.4",
-    "swagger-ui-express": "^5.0.1",
+    "swagger-ui-express": "^4.6.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
