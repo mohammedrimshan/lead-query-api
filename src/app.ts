@@ -8,6 +8,14 @@ export const app = express();
 
 app.use(express.json());
 
+// Root route
+app.get('/', (_req, res) => {
+  res.json({
+    status: 'success',
+    message: 'Lead Query API is running',
+  });
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'lead-query-api' });
 });
