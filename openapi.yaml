@@ -1,0 +1,130 @@
+openapi: 3.1.0
+info:
+  title: Lead Query API
+  version: 1.0.0
+  description: Multi-tenant CRM Lead Filter Query API
+paths:
+  /api/v1/leads/query:
+    post:
+      summary: Query and filter leads
+      operationId: queryLeads
+      parameters:
+        - name: x-tenant-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: x-user-id
+          in: header
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: x-user-role
+          in: header
+          required: true
+          schema:
+            type: string
+            enum: [owner, admin, manager, agent]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [createdAt, followUpDate]
+            default: createdAt
+        - name: sortDirection
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+            default: desc
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                q:
+                  type: string
+                  description: Free-text search across name, phone, e164, email
+                logic:
+                  type: string
+                  enum: [AND, OR]
+                  default: AND
+                filters:
+                  type: array
+                  items:
+                    type: object
+                    required: [fieldId, fieldType, condition]
+                    properties:
+                      fieldId:
+                        type: string
+                        description: System field name (e.g. "name", "assignedTo") or custom field UUID
+                      fieldType:
+                        type: string
+                        enum: [string, number, date, boolean]
+                      condition:
+                        type: string
+                        enum: [is, is not, contain, does not contain, starts with, ends with, before, after, greater than, less than, is empty, is not empty]
+                      value:
+                        type: string
+                      inputType:
+                        type: string
+      responses:
+        '200':
+          description: Successful query
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Leads fetched successfully
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        tenantId:
+                          type: string
+                        name:
+                          type: string
+                        customFields:
+                          type: array
+                          items:
+                            type: object
+                  meta:
+                    type: object
+                    properties:
+                      page:
+                        type: integer
+                      limit:
+                        type: integer
+                      totalRecords:
+                        type: integer
+                      totalPages:
+                        type: integer
+        '400':
+          description: Bad request (validation errors, invalid operators)
+        '401':
+          description: Unauthenticated (missing headers)
