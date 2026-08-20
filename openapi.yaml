@@ -3,6 +3,11 @@ info:
   title: Lead Query API
   version: 1.0.0
   description: Multi-tenant CRM Lead Filter Query API
+servers:
+  - url: https://lead-query-api-khaki.vercel.app
+    description: Production
+  - url: http://localhost:3000
+    description: Local development
 paths:
   /api/v1/leads/query:
     post:

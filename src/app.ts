@@ -1,8 +1,10 @@
 import express from 'express';
+import swaggerUi from 'swagger-ui-express';
 import { leadsRouter } from './routes/leads';
 import { errorHandler } from './middleware/error-handler';
 import { HttpStatus } from './constants/http';
 import { ErrorMessage } from './constants/messages';
+import { swaggerDocument } from './swagger';
 
 export const app = express();
 
@@ -21,6 +23,8 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/api/v1/leads', leadsRouter);
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((_req, res) => {
   res.status(HttpStatus.NOT_FOUND).json({
